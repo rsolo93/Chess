@@ -1,7 +1,7 @@
-#define step_pin1 2  // Pin 9 connected to Steps pin on EasyDriver
-#define dir_pin1 3   // Pin 8 connected to Direction pin
-#define step_pin2 4  // Pin 9 connected to Steps pin on EasyDriver
-#define dir_pin2 5   // Pin 8 connected to Direction pin
+#define step_pinx 2  // Pin 9 connected to Steps pin on EasyDriver
+#define dir_pinx 3   // Pin 8 connected to Direction pin
+#define step_piny 4  // Pin 9 connected to Steps pin on EasyDriver
+#define dir_piny 5   // Pin 8 connected to Direction pin
 #define X_pin A0    // Pin A0 connected to joystick x axis
 #define Y_pin A1    // Pin A1 connected to joystick y axis
 #define Joy_switch 6  // Pin 4 connected to joystick switch
@@ -42,10 +42,10 @@ void loop() {
     
       else {  //  if limit switch is not activated, move motor clockwise
       
-        digitalWrite(dir_pin1, LOW);  // (HIGH = anti-clockwise / LOW = clockwise)
-        digitalWrite(step_pin1, HIGH);
+        digitalWrite(dir_pinx, LOW);  // (HIGH = anti-clockwise / LOW = clockwise)
+        digitalWrite(step_pinx, HIGH);
         delay(step_speed);
-        digitalWrite(step_pin1, LOW);
+        digitalWrite(step_pinx, LOW);
         delay(step_speed);
     }      
   }
@@ -56,10 +56,10 @@ void loop() {
     
       else {  //  if limit switch is not activated, move motor counter clockwise
       
-        digitalWrite(dir_pin, HIGH);  // (HIGH = anti-clockwise / LOW = clockwise)
-        digitalWrite(step_pin, HIGH);
+        digitalWrite(dir_pinx, HIGH);  // (HIGH = anti-clockwise / LOW = clockwise)
+        digitalWrite(step_pinx, HIGH);
         delay(step_speed);
-        digitalWrite(step_pin, LOW);
+        digitalWrite(step_pinx, LOW);
         delay(step_speed);
     }      
   }
@@ -69,10 +69,10 @@ void loop() {
     
       else {  //  if limit switch is not activated, move motor clockwise
       
-        digitalWrite(dir_pin2, LOW);  // (HIGH = anti-clockwise / LOW = clockwise)
-        digitalWrite(step_pin2, HIGH);
+        digitalWrite(dir_piny, LOW);  // (HIGH = anti-clockwise / LOW = clockwise)
+        digitalWrite(step_piny, HIGH);
         delay(step_speed);
-        digitalWrite(step_pin2, LOW);
+        digitalWrite(step_piny, LOW);
         delay(step_speed);
     }      
   }
@@ -83,10 +83,10 @@ void loop() {
     
       else {  //  if limit switch is not activated, move motor counter clockwise
       
-        digitalWrite(dir_pin2, HIGH);  // (HIGH = anti-clockwise / LOW = clockwise)
-        digitalWrite(step_pin2, HIGH);
+        digitalWrite(dir_piny, HIGH);  // (HIGH = anti-clockwise / LOW = clockwise)
+        digitalWrite(step_piny, HIGH);
         delay(step_speed);
-        digitalWrite(step_pin2, LOW);
+        digitalWrite(step_piny, LOW);
         delay(step_speed);
     }      
   }
