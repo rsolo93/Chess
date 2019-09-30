@@ -1,93 +1,134 @@
-#define step_pinx 2  // Pin 9 connected to Steps pin on EasyDriver
-#define dir_pinx 3   // Pin 8 connected to Direction pin
-#define step_piny 4  // Pin 9 connected to Steps pin on EasyDriver
-#define dir_piny 5   // Pin 8 connected to Direction pin
-#define X_pin A0    // Pin A0 connected to joystick x axis
-#define Y_pin A1    // Pin A1 connected to joystick y axis
-#define Joy_switch 6  // Pin 4 connected to joystick switch
-#define Limit01 7  // Pin 2 connected to Limit switch out
-#define Limit02 8  // Pin 3 connected to Limit switch out
 
-int step_speed = 10;  // Speed of Stepper motor (higher = slower)
+/*
+ Stepper Motor Control - one step at a time
+
+ This program drives a unipolar or bipolar stepper motor.
+ The motor is attached to digital pins 8 - 11 of the Arduino.
+
+ The motor will step one step at a time, very slowly.  You can use this to
+ test that you've got the four wires of your stepper wired to the correct
+ pins. If wired correctly, all steps should be in the same direction.
+
+ Use this also to count the number of steps per revolution of your motor,
+ if you don't know it.  Then plug that number into the oneRevolution
+ example to see if you got it right.
+
+ Created 30 Nov. 2009
+ by Tom Igoe
+
+ */
+#define xPin A0
+#define yPin A1
+int xPosition = 0;
+int yPosition = 0;
+int mapX = 0;
+int mapY = 0;
+int moveY = 0;
+int moveX = 0;
+int step_360 = 211;
+#include <Stepper.h>
+
+
+const int stepsPerRevolution = 200;  // change this to fit the number of steps per revolution
+// for your motor
+
+// initialize the stepper library on pins 8 through 11:
+Stepper myStepperY(stepsPerRevolution, 2,3);
+Stepper myStepperX(stepsPerRevolution, 4,5);
+
+int stepCount = 0;         // number of steps the motor has taken
 
 void setup() {
-   pinMode(dir_pin1, OUTPUT);
-   pinMode(step_pin1, OUTPUT);
-   pinMode(dir_pin2, OUTPUT);
-   pinMode(step_pin2, OUTPUT);
-   pinMode(Limit01, INPUT);
-   pinMode(Limit02, INPUT);
-   pinMode(Joy_switch, INPUT_PULLUP);
-   delay(5);  // Wait for wake up
+  // initialize the serial port:
+  Serial.begin(9600);
+  pinMode(xPin, INPUT);
+  pinMode(yPin, INPUT);
+  myStepperX.setSpeed(600);
+  myStepperY.setSpeed(600);
+
 }
 
 void loop() {
-  if (!digitalRead(Joy_switch)) {  //  If Joystick switch is clicked
-    delay(500);  // delay for deboucing
-    switch (step_speed) {  // check current value of step_speed and change it
-      case 1:
-        step_speed=10;  // slow speed
-        break;
-      case 3:
-        step_speed=1;  // fast speed
-        break;
-      case 10:
-        step_speed=3;  // medium speed
-        break;
-    }
-  }    
-    
-  if (analogRead(X_pin) > 712) {  //  If joystick is moved Left
-    if (!digitalRead(Limit01)) {}  // check if limit switch is activated
-    
-      else {  //  if limit switch is not activated, move motor clockwise
-      
-        digitalWrite(dir_pinx, LOW);  // (HIGH = anti-clockwise / LOW = clockwise)
-        digitalWrite(step_pinx, HIGH);
-        delay(step_speed);
-        digitalWrite(step_pinx, LOW);
-        delay(step_speed);
-    }      
+
+  xPosition = analogRead(xPin);
+  yPosition = analogRead(yPin);
+  mapX = map(xPosition, 0, 1023, -512, 512);
+  mapY = map(yPosition, 0, 1023, -512, 512);
+
+  Serial.print("X: ");
+  Serial.print(mapX);
+  Serial.print(" | Y: ");
+  Serial.print(mapY);
+  Serial.println();
+ /* if(mapY > 0)
+  moveY = stepsPerRevolution;
+  else
+  moveY = -stepsPerRevolution;
+  if(mapX > 0)
+  moveX = -stepsPerRevolution;
+  else
+  moveX = stepsPerRevolution;*/
+
+  if(mapX > 50 && mapY >50){
+    for(int s=0; s<step_360; s++)
+{
+ myStepperX.step(-1);
+ myStepperY.step(1);
+}
+
+  }
+  if(mapX < -10 && mapY < -10){
+    for(int s=0; s<step_360; s++)
+{
+ myStepperX.step(1);
+ myStepperY.step(-1);
+}
   }
   
-    if (analogRead(X_pin) < 312) {  // If joystick is moved right
-    
-    if (!digitalRead(Limit02)) {}  // check if limit switch is activated
-    
-      else {  //  if limit switch is not activated, move motor counter clockwise
-      
-        digitalWrite(dir_pinx, HIGH);  // (HIGH = anti-clockwise / LOW = clockwise)
-        digitalWrite(step_pinx, HIGH);
-        delay(step_speed);
-        digitalWrite(step_pinx, LOW);
-        delay(step_speed);
-    }      
+  if(mapX < -10 && mapY > 50){
+    for(int s=0; s<step_360; s++)
+{
+ myStepperX.step(1);
+ myStepperY.step(1);
+}
   }
+
+  if(mapX > 50 && mapY < -10){
+    for(int s=0; s<step_360; s++)
+{
+ myStepperX.step(-1);
+ myStepperY.step(-1);
+}
     
-  if (analogRead(Y_pin) > 712) {  //  If joystick is moved Left
-    if (!digitalRead(Limit01)) {}  // check if limit switch is activated
-    
-      else {  //  if limit switch is not activated, move motor clockwise
-      
-        digitalWrite(dir_piny, LOW);  // (HIGH = anti-clockwise / LOW = clockwise)
-        digitalWrite(step_piny, HIGH);
-        delay(step_speed);
-        digitalWrite(step_piny, LOW);
-        delay(step_speed);
-    }      
   }
+
+  if(mapX >50 && (mapY > -10 && mapY < 50))
+  for(int s=0; s<step_360; s++)
+    myStepperX.step(-1);
+  if(mapX <-10 && (mapY > -10 && mapY < 50))
+  for(int s=0; s<step_360; s++)
+  myStepperX.step(1);
+  if(mapY >50 && (mapX > -10 && mapX < 50))
+  for(int s=0; s<step_360; s++)
+  myStepperY.step(1);
+  if(mapY <-10 && (mapX > -10 && mapX < 50))
+  for(int s=0; s<step_360; s++)
+  myStepperY.step(-1);
   
-    if (analogRead(Y_pin) < 312) {  // If joystick is moved right
-    
-    if (!digitalRead(Limit02)) {}  // check if limit switch is activated
-    
-      else {  //  if limit switch is not activated, move motor counter clockwise
-      
-        digitalWrite(dir_piny, HIGH);  // (HIGH = anti-clockwise / LOW = clockwise)
-        digitalWrite(step_piny, HIGH);
-        delay(step_speed);
-        digitalWrite(step_piny, LOW);
-        delay(step_speed);
-    }      
-  }
+//  myStepperY.step(moveY)
+
+
+  //tepperX.step(moveX);
+
+
+  //delay(500);
+/*
+  Serial.println("CounterClockwise");
+  for(int i=0; i<5; i++){
+  myStepper.step(-stepsPerRevolution*i);
+  i = rand()*5;
+    delay(500);} */
+ //delay(500);
+
+  
 }
