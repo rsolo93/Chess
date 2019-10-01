@@ -19,8 +19,11 @@
  */
 #define xPin A0
 #define yPin A1
+#define sens A2
+//#define sens 9
 int xPosition = 0;
 int yPosition = 0;
+int dist = 0;
 int mapX = 0;
 int mapY = 0;
 int moveY = 0;
@@ -43,6 +46,7 @@ void setup() {
   Serial.begin(9600);
   pinMode(xPin, INPUT);
   pinMode(yPin, INPUT);
+  pinMode(sens, INPUT);
   myStepperX.setSpeed(600);
   myStepperY.setSpeed(600);
 
@@ -52,6 +56,7 @@ void loop() {
 
   xPosition = analogRead(xPin);
   yPosition = analogRead(yPin);
+  dist = analogRead(sens);
   mapX = map(xPosition, 0, 1023, -512, 512);
   mapY = map(yPosition, 0, 1023, -512, 512);
 
@@ -59,6 +64,8 @@ void loop() {
   Serial.print(mapX);
   Serial.print(" | Y: ");
   Serial.print(mapY);
+  Serial.print(" | Distance: ");
+  Serial.print(dist);
   Serial.println();
  /* if(mapY > 0)
   moveY = stepsPerRevolution;
