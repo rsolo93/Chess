@@ -118,7 +118,7 @@ void loop() {
   myStepper.step(-stepsPerRevolution*i);
   i = rand()*5;
     delay(500);} */
- //delay(500);
+ 
 
   
 }
