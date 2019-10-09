@@ -30,6 +30,7 @@ void newGame(void)
 
    current_game = new Game();
 }
+
 void movePiece(void)
 {
    String to_record;
