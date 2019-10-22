@@ -22,9 +22,11 @@ int step_360 = 211;
 int push = 0;
 int distance_cm1;
 int distance_cm2;
-
-int stepsPerRevolution = 211;
-
+int lastbuttonState = 1;
+int buttonState;
+const int halfstep = 412;
+const int fullstep = halfstep*2;
+const int stepsPerRevolution = 211;
 Stepper myStepperX(stepsPerRevolution, 2,3);
 Stepper myStepperY(stepsPerRevolution, 4,5);
 SharpIR mySensor1 = SharpIR(IRPin1, 1080);
@@ -34,13 +36,13 @@ SharpIR mySensor1 = SharpIR(IRPin1, 1080);
 void setup() {
   // initialize the serial port:
   Serial.begin(9600);
-  pinMode(xpos, INPUT);
+  pinMode(xpos, INPUT_PULLUP);
   pinMode(xneg, INPUT);
   pinMode(ypos, INPUT);
   pinMode(yneg, INPUT);
   pinMode(pushBtn, INPUT);
   pinMode(magnet, OUTPUT);
-  myStepperX.setSpeed(600);
+  myStepperX.setSpeed(900);
   myStepperY.setSpeed(600);
 
 }
@@ -51,9 +53,9 @@ void loop() {
   mapX = map(xPosition, 0, 1023, -512, 512);
   mapY = map(yPosition, 0, 1023, -512, 512);
 
-  if(digitalRead(pushBtn) == HIGH){
+  if(digitalRead(pusnothBtn) == HIGH){
     digitalWrite(magnet,HIGH);
-  }
+  }not
   else{
     digitalWrite(magnet,LOW);
   }
@@ -73,44 +75,9 @@ void loop() {
  /* Serial.print("Mean distance 2: ");
   Serial.print(distance_cm2);
   Serial.println(" cm");*/
-  /*
-  if(mapX > 50 && mapY >50){
-    for(int s=0; s<step_360; s++)
-{
- myStepperX.step(1);
- myStepperY.step(-1);
-}
 
-  }
-  if(mapX < -50 && mapY < -50){
-    for(int s=0; s<step_360; s++)
-{
- myStepperX.step(-1);
- myStepperY.step(1);
-}
-  }
 
-  if(mapX < -50 && mapY > 50){
-    for(int s=0; s<step_360; s++)
-{
- myStepperX.step(-1);
- myStepperY.step(-1);
-}
-  }
-
-  if(mapX > 50 && mapY < -50){
-    for(int s=0; s<step_360; s++)
-{
- myStepperX.step(1);
- myStepperY.step(1);
-}
-*/
-   if(digitalRead(xpos) == HIGH && digitalRead(ypos) ==HIGH){
-  for(int s=0; s<step_360; s++){
-    myStepperX.step(-1);
-    myStepperY.step(1);
-}}
-
+/*
   if(digitalRead(xpos) == HIGH)
   for(int s=0; s<step_360; s++)
     myStepperX.step(1);
@@ -124,7 +91,16 @@ void loop() {
   for(int s=0; s<step_360; s++)
   myStepperY.step(1);
 
-  
+  */
+  buttonState = (digitalRead(xpos));
+  if(lastbuttonState != buttonState){
+    if(buttonState == LOW){
+  myStepperX.step(fullstep*10);
+  //myStepperY.step(-fullstep *6);
+  delay(50);
+  }
 
+  lastbuttonState = buttonState;
+  }
 
 }
