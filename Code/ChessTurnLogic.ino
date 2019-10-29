@@ -67,7 +67,7 @@ if(turn == 1) //black turn
   }
   else if(inOrig == 48 || inOrig >= 65 || inOrig <= 90)
   {
-    // bad orig - white piece or vacant
+    // bad orig - white piece or vacant 
   }
   
 } 
