@@ -32,12 +32,16 @@ SharpIR mySensor1 = SharpIR(IRPin1, 1080);
 void setup() {
   // initialize the serial port:
   Serial.begin(9600);
-  pinMode(xpos, INPUT_PULLUP);
-  pinMode(xneg, INPUT);
-  pinMode(ypos, INPUT);
-  pinMode(yneg, INPUT);
+  pinMode(Magbut, INPUT);
+  pinMode(Xpos, INPUT_PULLUP);
+  pinMode(Xneg, INPUT_PULLUP);
+  pinMode(Ypos, INPUT_PULLUP);
+  pinMode(Yneg, INPUT_PULLUP);
   pinMode(pushBtn, INPUT);
   pinMode(magnet, OUTPUT);
+  lc.shutdown(0,false);
+  lc.setIntensity(0,8);
+  lc.clearDisplay(0);
   myStepperX.setSpeed(800);
   myStepperY.setSpeed(800);
 
@@ -46,8 +50,20 @@ void loop() {
 
   distance_cm1 = mySensor1.distance();
 //  distance_cm2 = mySensor2.getDistance();
-  mapX = map(xPosition, 0, 1023, -512, 512);
-  mapY = map(yPosition, 0, 1023, -512, 512);
+
+  buttonpress();
+  movePiece();
+  /*
+  Serial.print(XmoveO);
+  Serial.print(" | ");
+  Serial.print(YmoveO);
+  Serial.print(" | | ");
+  Serial.print(XmoveD);
+  Serial.print(" | ");
+  Serial.print(YmoveD);
+  Serial.println();
+*/
+  
 
 /*  if(digitalRead(pushButton == HIGH){
     digitalWrite(magnet,HIGH);
@@ -56,14 +72,14 @@ void loop() {
     digitalWrite(magnet,LOW);
   }*/
 
-  Serial.print("X: ");
+ /* Serial.print("X: ");
   Serial.print(digitalRead(xpos));
   Serial.print(" | Y: ");
   Serial.print(digitalRead(ypos));
  // Serial.print(" | Distance: ");
  // Serial.print(dist);
   //Serial.println();*/
-  Serial.print(" | push: ");
+ /* Serial.print(" | push: ");
   Serial.print(push);
   Serial.print(" | Mean distance 1: ");
   Serial.print(distance_cm1);
@@ -88,29 +104,7 @@ void loop() {
   myStepperY.step(1);
 
   */
-  buttonState = (digitalRead(xpos));
-  buttonState2 = (digitalRead(xneg));
 
-  
-  if(lastbuttonState != buttonState){
-    if(buttonState == LOW){
-      moveX(4);
-      moveY(4);
-//  myStepperX.step(9474);
-  //myStepperY.step(-7204);
-  }
-  lastbuttonState = buttonState;
-  }
 
-   if(lastbuttonState2 != buttonState2){
-    if(buttonState2 == LOW){
-      moveX(4);
-      moveY(4);
- // myStepperX.step(-9474);
- // myStepperY.step(7204);
-  }
-
-  lastbuttonState2 = buttonState2;
-  }
 
 }
