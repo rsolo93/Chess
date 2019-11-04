@@ -3,6 +3,7 @@ void setup() {
 
 void loop() {
 int turn = 0; //0 is white turn
+int casee = 0; //////////////////////////////////////////////////////////////////////////////////////////////////placeholder for switch control variable
 char board[8][10] =
     {
     //Capital Letters are WHITE
@@ -17,7 +18,7 @@ char board[8][10] =
     };
 while(true)
 {
-  int coordXorig = 0; //numbers will be received from input
+  int coordXorig = 0; /////////////////////////////////////////////////////////////////////////////////////////numbers will be received from input
   int coordYorig = 0; //
   int coordXdest = 0; //
   int coordYdest = 0; //
@@ -35,16 +36,17 @@ if(turn == 0) //white turn
      {
       board[coordXdest][coordYdest] = char(inOrig); //change dest to white piece
       turn = 1; /////set turn to black
+      casee = 4; //push switch to next phase for movement
      }
          
      else if(inDest >=65 && inDest <= 90) //bad dest - destination is white piece
      {
-      
+     casee = 1; ////restart switch to phase 1 for new input choices
      }
   }
   else if(inOrig == 48 || inOrig >= 97 || inOrig <= 122) //bad orig - origin is vacant or black
   {
-    // bad pick
+    casee = 1; ////restart switch to phase 1 for new input choices
   }
   
 }
@@ -58,16 +60,18 @@ if(turn == 1) //black turn
      {
       board[coordXdest][coordYdest] = char(inOrig); //change dest to black piece
       turn = 0;////set turn to white
+      casee = 4; //push switch to next phase for movement
      }
      
      else if(inDest >=97 && inDest <= 122) //bad dest - destination is black piece
      {
-      
+      casee = 1; ////restart switch to phase 1 for new input choices
      }
   }
   else if(inOrig == 48 || inOrig >= 65 || inOrig <= 90)
   {
-    // bad orig - white piece or vacant 
+    // bad orig - white piece or vacant
+    casee = 1; //restart switch to phase 1 for new input choices
   }
   
 } 
