@@ -18,12 +18,15 @@ int mapX = 0;
 int mapY = 0;
 int step_360 = 211;
 int push = 0;
+int xmove, ymove;
 int distance_cm1;
 int distance_cm2;
 int lastbuttonState = 1;
 int lastbuttonState2 =1;
 int buttonState;
 int buttonState2;
+int cas = 1;
+int Case,x1,x2,y1,y2;
 
 SharpIR mySensor1 = SharpIR(IRPin1, 1080);
 //SharpIR mySensor2 = SharpIR(IRPin2, 1080);
@@ -32,7 +35,7 @@ SharpIR mySensor1 = SharpIR(IRPin1, 1080);
 void setup() {
   // initialize the serial port:
   Serial.begin(9600);
-  pinMode(Magbut, INPUT);
+  pinMode(Magbut, INPUT_PULLUP);
   pinMode(Xpos, INPUT_PULLUP);
   pinMode(Xneg, INPUT_PULLUP);
   pinMode(Ypos, INPUT_PULLUP);
@@ -46,13 +49,109 @@ void setup() {
   myStepperY.setSpeed(800);
 
 }
-void loop() {
+  void loop() {
+  int switchCase = digitalRead(Magbut);
+  Case = 0;
+  if(switchCase == HIGH){
+      Case = Case+1;
+      Serial.print(Case);
+      if(Case > 6){Case=0;     
+      }
 
-  distance_cm1 = mySensor1.distance();
-//  distance_cm2 = mySensor2.getDistance();
+  switch(Case){
+    case 1:
+      Serial.println("Choose Origin");
+        while(1){
+          buttonpress();
+          x1 = XState;
+          y1 = YState;
+          int swit = digitalRead(Magbut);
+          if(swit == HIGH){
+            OriginX = board_move[XState][YState][0];
+            OriginY = board_move[XState][YState][1];
+            Serial.print(" Origin Coordinates are: ");
+            Serial.print(OriginX);
+            Serial.print(" | ");
+            Serial.println(OriginY);
+            delay(1000);
+           break;
+          }
+      }
+    case 2:
+      Serial.println("Choose Destination");
+        while(1){
+          buttonpress();
+          x2 = XState;
+          y2 = YState;
+          int swit = digitalRead(Magbut);
+          if(swit == HIGH){
+          DestinationX = board_move[XState][YState][0];
+          DestinationY = board_move[XState][YState][1];
+            Serial.print("Destination Coordinates are: ");
+            Serial.print(DestinationX);
+            Serial.print(" | ");
+            Serial.println(DestinationY);
+            delay(1000);
+           break;
+          }
+        }
+    case 3:
+       Serial.println("Initiate Moving Piece");
 
-  buttonpress();
-  movePiece();
+       if(OriginX > DestinationX)
+       xmove = abs((DestinationX-OriginX));
+       else
+       xmove = -abs(DestinationX-OriginX);
+
+       if(OriginY > DestinationY)
+       ymove = abs(DestinationY-OriginY);
+       else
+       ymove = -abs(DestinationY-OriginY);
+       
+       Serial.print("xmove is ");
+       Serial.print(xmove);
+       Serial.print(" ");
+       moveX(xmove*840);
+       Serial.print("ymove is ");
+       Serial.println(ymove);
+       
+       moveY(-ymove*840);
+      Serial.println("Done");
+      break;    
+      /*
+    case 4:
+      Serial.print("Initiate");
+        while(switchCase == HIGH){
+          moveX((x2-x1)*840-420);
+          moveY((y2-y1)*840-420);
+
+          delay(5000);
+      }
+      break;*/
+  }
+  }
+
+}
+
+  
+ /* buttonpress();
+  Origin();
+  OriginX = x;
+  OriginY = y;
+  Serial.print("OriginX: ");
+  Serial.print(OriginX);
+  Serial.print(" | OriginY: ");
+  Serial.println(OriginY);
+  Destination();
+  DestinationX = a;
+  DestinationY = b;
+  Serial.print("DestinationX: ");
+  Serial.print(DestinationX);
+  Serial.print(" | DestinationY: ");
+  Serial.print(DestinationY);
+  Serial.println("   "); 
+  //moveX((DestinationX-OriginX)*840);
+  //moveY((DestinationY-DestinationX)*840);
   /*
   Serial.print(XmoveO);
   Serial.print(" | ");
@@ -104,7 +203,3 @@ void loop() {
   myStepperY.step(1);
 
   */
-
-
-
-}

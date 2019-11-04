@@ -18,7 +18,11 @@ int DestinationY;
 int counter;
 int a;
 int b;
-int diff[2];
+
+int x;
+int y;
+bool origin = false;
+bool destination = false;
  const int halfstep = 420;
  const int fullstep = halfstep*2;
  const int stepsPerRevolution = 211;
@@ -39,13 +43,24 @@ Stepper myStepperY(stepsPerRevolution, 4,5);
       { 'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r', 'O', 'O', 'O'},
     };
 
-    int calc(int x[], int y[])
+    const int board_move[8][8][2] =
     {
-        int a = x[0]-y[0];
-        int b = x[1]-y[1];
-        diff[0] = a;
-        diff[1] = b;
-        return diff;
+      
+    //Capital Letters are WHITE
+      { {0,0},  {1,0},  {2,0},  {3,0},  {4,0},  {5,0},  {6,0},  {7,0}  },
+      { {0,1},  {1,1},  {2,1},  {3,1},  {4,1},  {5,1},  {6,1},  {7,1}  },
+      { {0,2},  {1,2},  {2,2},  {3,2},  {4,2},  {5,2},  {6,2},  {7,2}  },
+      { {0,3},  {1,3},  {2,3},  {3,3},  {4,3},  {5,3},  {6,3},  {7,3}  },
+      { {0,4},  {1,4},  {2,4},  {3,4},  {4,4},  {5,4},  {6,4},  {7,4}  },
+      { {0,5},  {1,5},  {2,5},  {3,5},  {4,5},  {5,5},  {6,5},  {7,5}  },
+      { {0,6},  {1,6},  {2,6},  {3,6},  {4,6},  {5,6},  {6,6},  {7,6}  },
+      { {0,7},  {1,7},  {2,7},  {3,7},  {4,7},  {5,7},  {6,7},  {7,7}  },
+    };
+
+    int calc(int x, int y)
+    {
+        int a = x-y;        
+        return a;
     };
 
 int buttonpress(){
@@ -86,65 +101,71 @@ int buttonpress(){
     }
 }
 
-    void moveX(int x)
+    void moveX(int mx)
     {
-        myStepperX.step(x);
+        myStepperX.step(mx);
     };
 
-    void moveY(int y)
+    void moveY(int my)
     {
-        myStepperY.step(y);
+        myStepperY.step(my);
     };
 
 
-int movePiece(){
+int Origin(){
+  origin == true;
+  destination == false;
 int MagState = digitalRead(Magbut);
-counter = 0;
- /* int board_move[8][8][2] =
-    {
-      
-    //Capital Letters are WHITE
-      { {-2940,2940},{-2100,2940}, {-1260,2940}, {-420,2940}, {420,2940}, {1260,2940}, {2100,2940}, {2940,2940}},
-      { {-2940,2100},{-2100,2100}, {-1260,2100}, {-420,2100}, {420,2100}, {1260,2100}, {2100,2100}, {2940,2100}},
-      { {-2940,1260},{-2100,1260}, {-1260,1260}, {-420,1260}, {420,1260}, {1260,1260}, {2100,1260}, {2940,1260}},
-      { {-2940,420}, {-2100,420}, {-1260,420}, {-420,420}, {420,420}, {1260,420}, {2100,420}, {2940,420}},
-      { {-2940,-420}, {-2100,-420}, {-1260,-420}, {-420,-420}, {420,-420}, {1260,-420}, {2100,-420}, {2940,-420}},
-      { {-2940,-1260}, {-2100,-1260}, {-1260,-1260}, {-420,-1260}, {420,-1260}, {1260,-1260}, {2100,-1260}, {2940,-1260}},
-      { {-2940,-2100}, {-2100,-2100}, {-1260,-2100}, {-420,-2100}, {420,-2100}, {1260,-2100}, {2100,-2100}, {2940,-2100}},
-      { {-2940,-2940}, {-2100,-2940}, {-1260,-2940}, {-420,-2940}, {420,-2940}, {1260,-2940}, {2100,-2940}, {2940,-2940}},
-    };*/
-     int board_move[8][8][2] =
-    {
-      
-    //Capital Letters are WHITE
-      { {4,4},  {3,4},  {2,4},  {1,4},  {-1,4},  {-2,4},  {-3,4},  {-4,4}  },
-      { {4,3},  {3,3},  {2,3},  {1,3},  {-1,3},  {-2,3},  {-3,3},  {-4,3}  },
-      { {4,2},  {3,2},  {2,2},  {1,2},  {-1,2},  {-2,2},  {-3,2},  {-4,2}  },
-      { {4,1},  {3,1},  {2,1},  {1,1},  {-1,1},  {-2,1},  {-3,1},  {-4,1}  },
-      { {4,-1}, {3,-1}, {2,-1}, {1,-1}, {-1,-1}, {-2,-1}, {-3,-1}, {-4,-1} },
-      { {4,-2}, {3,-2}, {2,-2}, {1,-2}, {-1,-2}, {-2,-2}, {-3,-2}, {-4,-2} },
-      { {4,-3}, {3,-3}, {2,-3}, {1,-3}, {-1,-3}, {-2,-3}, {-3,-3}, {-4,-3} },
-      { {4,-4}, {3,-4}, {2,-4}, {1,-4}, {-1,-4}, {-2,-4}, {-3,-4}, {-4,-4} },
-    };
-    
-    if(MagState == HIGH && counter == 0){
-     OriginX = board_move[XState][YState][0];
-     OriginY = board_move[XState][YState][1];
-       delay(1000);
-      counter+=1;   
+
+    if(MagState == HIGH && origin == true) {
+     x = board_move[XState][YState][0];
+     y = board_move[XState][YState][1];
+    /*
+    Serial.print(result[0]);
+    Serial.print(" | ");
+    Serial.print(result[1]);*/
+    return x, y;
     }
+}
+
+int Destination(){
+  origin == false;
+  destination == true;
+  int MagState = digitalRead(Magbut);
+
+    if(MagState == HIGH && destination == true) {
+     a = board_move[XState][YState][0];
+     b = board_move[XState][YState][1];
+    /*
+    Serial.print(result[0]);
+    Serial.print(" | ");
+    Serial.print(result[1]);*/
+    return a, b;
+    }
+}
+
+    /*
       if(MagState == HIGH && counter == 1){
        DestinationX = board_move[XState][YState][0];
        DestinationY = board_move[XState][YState][1];
       delay(1000);
-      counter+=1;  
+      Serial.print("Counter is: ");
+      Serial.println(counter);
+
+      counter++;  
       }
 
     int Xmove = calc(DestinationX, OriginX);   
     int Ymove = calc(DestinationY, OriginY);
     if(MagState == HIGH && counter == 2){
      moveX(Xmove*840);
+     delay(100);
      moveY(Ymove*840);
+     delay(1000);
+      Serial.print("Counter is: ");
+      Serial.println(counter);
+
+
      counter = 0;
     }
 
