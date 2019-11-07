@@ -10,14 +10,14 @@ int x1, y1, x2, y2, Xmove, Ymove;
 const int stepsPerRevolution = 211;
 int board_move[8][8][2] =
 {
-      { {0,0},  {1,0},  {2,0},  {3,0},  {4,0},  {5,0},  {6,0},  {7,0}  },
-      { {0,1},  {1,1},  {2,1},  {3,1},  {4,1},  {5,1},  {6,1},  {7,1}  },
-      { {0,2},  {1,2},  {2,2},  {3,2},  {4,2},  {5,2},  {6,2},  {7,2}  },
-      { {0,3},  {1,3},  {2,3},  {3,3},  {4,3},  {5,3},  {6,3},  {7,3}  },
-      { {0,4},  {1,4},  {2,4},  {3,4},  {4,4},  {5,4},  {6,4},  {7,4}  },
-      { {0,5},  {1,5},  {2,5},  {3,5},  {4,5},  {5,5},  {6,5},  {7,5}  },
-      { {0,6},  {1,6},  {2,6},  {3,6},  {4,6},  {5,6},  {6,6},  {7,6}  },
-      { {0,7},  {1,7},  {2,7},  {3,7},  {4,7},  {5,7},  {6,7},  {7,7}  },
+      { {1,1},  {2,1},  {3,1},  {4,1},  {5,1},  {6,1},  {7,1},  {8,1}  },
+      { {1,2},  {2,2},  {3,2},  {4,2},  {5,2},  {6,2},  {7,2},  {8,2}  },
+      { {1,3},  {2,3},  {3,3},  {4,3},  {5,3},  {6,3},  {7,3},  {8,3}  },
+      { {1,4},  {2,4},  {3,4},  {4,4},  {5,3},  {6,4},  {7,4},  {8,4}  },
+      { {1,5},  {2,5},  {3,5},  {4,5},  {5,5},  {6,5},  {7,5},  {8,5}  },
+      { {1,6},  {2,6},  {3,6},  {4,6},  {5,6},  {6,6},  {7,6},  {8,6}  },
+      { {1,7},  {2,7},  {3,7},  {4,7},  {5,7},  {6,7},  {7,7},  {8,7}  },
+      { {1,8},  {2,8},  {3,8},  {4,8},  {5,8},  {6,8},  {7,8},  {8,8}  },
     };
 Stepper myStepperX(stepsPerRevolution, 2,3);
 Stepper myStepperY(stepsPerRevolution, 4,5);
@@ -97,7 +97,11 @@ void loop() {
       Serial.println(ymove);
       moveX(OriginX*840);
       moveY(OriginY*840);
+      moveX(-420);
+      moveY(-420);
       delay(5000);
+      moveX(420);
+      moveY(420);
       Origin2Dest();
       moveX(xmove);
       moveY(ymove);
@@ -201,10 +205,10 @@ int CTL(int xOrig,int yOrig,int xDest,int yDest){
         {'0', 'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r', '0'}
       };
   
-    int coordXorig = xOrig; /////////////////////////////////////////////////////////////////////////////////////////numbers will be received from input
-    int coordYorig = yOrig; //
-    int coordXdest = xDest; //
-    int coordYdest = yDest; //
+    int coordXorig = xOrig; 
+    int coordYorig = yOrig; 
+    int coordXdest = xDest; 
+    int coordYdest = yDest; 
   
     int inOrig = board[coordXorig][coordYorig];
     int inDest = board[coordXdest][coordYdest];
@@ -259,4 +263,10 @@ int CTL(int xOrig,int yOrig,int xDest,int yDest){
     
 }
 return casee;
+}
+
+void graveyard(){
+  moveX(DestinationX*840);
+  moveY(DestinationY*840);
+  delay(1000);
 }
