@@ -99,6 +99,8 @@ void loop() {
       moveY(OriginY*840);
       delay(5000);
       Origin2Dest();
+      moveX(xmove);
+      moveY(ymove);
       delay(5000);
       homing();
        
