@@ -57,8 +57,6 @@ void loop() {
       Serial.print("Choose Origin");
         while(1){
           buttonpress();
-          x1 = XState;
-          y1 = YState;
           int swit = mcp.digitalRead(0);
           if(swit == HIGH){
             OriginX = board_move[XState][YState][0];
@@ -73,8 +71,6 @@ void loop() {
       Serial.print("Choose Destination");
         while(1){
           buttonpress();
-          x2 = XState;
-          y2 = YState;
           int swit = mcp.digitalRead(0);
           if(swit == HIGH){
             DestinationX = board_move[XState][YState][0];
@@ -99,12 +95,16 @@ void loop() {
       moveY(OriginY*840);
       moveX(-420);
       moveY(-420);
+      activate();
       delay(5000);
       moveX(420);
       moveY(420);
       Origin2Dest();
       moveX(xmove);
       moveY(ymove);
+      moveX(-420);
+      moveY(-420);
+      deactivate();
       delay(5000);
       homing();
        
@@ -268,5 +268,16 @@ return casee;
 void graveyard(){
   moveX(DestinationX*840);
   moveY(DestinationY*840);
+  moveX(-420);
+  moveY(420);
+  activate();
   delay(1000);
+}
+
+void activate(){
+  
+}
+
+void deactivate(){
+  
 }
