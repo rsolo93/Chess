@@ -6,7 +6,7 @@
 LedControl lc = LedControl(6,7,8,1);
 MCP23017 mcp;
 int XState, YState, OldXState, OldYState, Case, OriginX, OriginY, DestinationX, DestinationY, xmove, ymove, casee;
-int x1, y1, x2, y2, Xmove, Ymove;
+int a, x1, y1, x2, y2, Xmove, Ymove;
 const int stepsPerRevolution = 211;
 int board_move[8][8][2] =
 {
@@ -222,6 +222,7 @@ int CTL(int xOrig,int yOrig,int xDest,int yDest){
        if(inDest == 48 || (inDest >=97 && inDest <= 122)) //good dest - destination is vacant or black piece
        {
         board[coordXdest][coordYdest] = char(inOrig); //change dest to white piece
+        graveyard();
         turn = 1; /////set turn to black
         casee = 4; //push switch to next phase for movement
        }
@@ -246,6 +247,7 @@ int CTL(int xOrig,int yOrig,int xDest,int yDest){
        if(inDest == 48 || (inDest >=65 && inDest <= 90)) //good dest - destination is vacant or white piece
        {
         board[coordXdest][coordYdest] = char(inOrig); //change dest to black piece
+        graveyard();
         turn = 0;////set turn to white
         casee = 4; //push switch to next phase for movement
        }
@@ -269,9 +271,21 @@ void graveyard(){
   moveX(DestinationX*840);
   moveY(DestinationY*840);
   moveX(-420);
-  moveY(420);
+  moveY(-420);
   activate();
   delay(1000);
+  moveX(420);
+  moveY(420);
+  moveX(-DestinationX*840);
+  moveY(-DestinationY*840);
+  for(a=1;a <= 8; a++){
+    moveY(a*420);
+  }
+  moveX(-420);
+  deactivate();
+  delay(1000);
+  moveX(420);
+  moveY(-a*420);
 }
 
 void activate(){
