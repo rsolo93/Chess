@@ -1,6 +1,9 @@
 #include "LedControl.h"
 #include <stddef.h>
 #include <Stepper.h>
+#include "MCP23017.h"
+#include <Wire.h>
+MCP23017 mcp;
 
 int XState;
 int YState;
@@ -18,6 +21,7 @@ int DestinationY;
 int counter;
 int a;
 int b;
+int limx, limy;
 
 int x;
 int y;
@@ -27,9 +31,9 @@ bool destination = false;
  const int fullstep = halfstep*2;
  const int stepsPerRevolution = 211;
 
- LedControl lc = LedControl(6,7,8,1);
-Stepper myStepperX(stepsPerRevolution, 2,3);
-Stepper myStepperY(stepsPerRevolution, 4,5);
+ LedControl lc = LedControl(13,12,11,1);//Data, CLK, CS
+Stepper myStepperX(stepsPerRevolution, 2,3); //top down
+Stepper myStepperY(stepsPerRevolution, 4,5); //top down
      const char initial_board[8][11] =
     {
     //Capital Letters are White, Lower Case Black
@@ -64,12 +68,16 @@ Stepper myStepperY(stepsPerRevolution, 4,5);
     };
 
 int buttonpress(){
-  
+  /*
   int MagState = digitalRead(Magbut);
   int XposState = digitalRead(Xpos);
   int XnegState = digitalRead(Xneg);
   int YposState = digitalRead(Ypos);
-  int YnegState = digitalRead(Yneg);
+  int YnegState = digitalRead(Yneg);*/
+  int XposState = mcp.digitalRead(4); 
+  int XnegState = mcp.digitalRead(3); 
+  int YposState = mcp.digitalRead(1); 
+  int YnegState = mcp.digitalRead(2);
   if(XposState == HIGH){
       XState = XState+1;
       if(XState > 7){XState=0;     
@@ -111,6 +119,17 @@ int buttonpress(){
         myStepperY.step(my);
     };
 
+
+  void homing(){
+    
+    while(mcp.digitalRead(6) != 0)
+    moveY(-1);
+    while(mcp.digitalRead(5) != 0)
+    moveX(1);
+
+    if(mcp.digitalRead(6) == 0 && mcp.digitalRead(5) == 0)
+    return;
+  };
 
 int Origin(){
   origin == true;

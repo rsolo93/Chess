@@ -1,16 +1,14 @@
 #include "Chess.h"
 #include "SharpIR.h"
-
+#include "MCP23017.h"
 #define IRPin1 A2
 #define IRPin2 A3
+
+
 //#define pushbutton A3
 //#define magnet 6
 const int magnet = 6;
 const int pushBtn = 13;
-const int xpos = 12;
-const int xneg = 11;
-const int ypos = 10;
-const int yneg = 9;
 int xPosition = 0;
 int yPosition = 0;
 int dist = 0;
@@ -28,33 +26,43 @@ int buttonState2;
 int cas = 1;
 int Case,x1,x2,y1,y2;
 
-SharpIR mySensor1 = SharpIR(IRPin1, 1080);
+//SharpIR mySensor1 = SharpIR(IRPin1, 1080);
 //SharpIR mySensor2 = SharpIR(IRPin2, 1080);
 
 
 void setup() {
   // initialize the serial port:
   Serial.begin(9600);
-  pinMode(Magbut, INPUT_PULLUP);
+/*  pinMode(Magbut, INPUT_PULLUP);
   pinMode(Xpos, INPUT_PULLUP);
   pinMode(Xneg, INPUT_PULLUP);
   pinMode(Ypos, INPUT_PULLUP);
   pinMode(Yneg, INPUT_PULLUP);
-  pinMode(pushBtn, INPUT);
+  pinMode(pushBtn, INPUT);*/
   pinMode(magnet, OUTPUT);
+  mcp.begin(7);
+  
+  mcp.pinMode(0, INPUT_PULLUP);    //Magbut
+  mcp.pinMode(1, INPUT_PULLUP);    //Xpos
+  mcp.pinMode(2, INPUT_PULLUP);    //Yneg
+  mcp.pinMode(3, INPUT_PULLUP);    //Ypos
+  mcp.pinMode(4, INPUT_PULLUP);    //Yneg
+  mcp.pinMode(5, INPUT); //Limitswitch 1
+  mcp.pinMode(6, INPUT); //Limitswitch 2
   lc.shutdown(0,false);
   lc.setIntensity(0,8);
   lc.clearDisplay(0);
   myStepperX.setSpeed(800);
   myStepperY.setSpeed(800);
+  homing();
 
 }
   void loop() {
-  int switchCase = digitalRead(Magbut);
+  int switchCase =mcp.digitalRead(0);
   Case = 0;
   if(switchCase == HIGH){
       Case = Case+1;
-      Serial.print(Case);
+    //  Serial.print(Case);
       if(Case > 6){Case=0;     
       }
 
@@ -65,7 +73,7 @@ void setup() {
           buttonpress();
           x1 = XState;
           y1 = YState;
-          int swit = digitalRead(Magbut);
+          int swit =  mcp.digitalRead(0);
           if(swit == HIGH){
             OriginX = board_move[XState][YState][0];
             OriginY = board_move[XState][YState][1];
@@ -75,6 +83,8 @@ void setup() {
             Serial.println(OriginY);
             delay(1000);
            break;
+           XState = 0;
+           YState = 0;
           }
       }
     case 2:
@@ -83,7 +93,7 @@ void setup() {
           buttonpress();
           x2 = XState;
           y2 = YState;
-          int swit = digitalRead(Magbut);
+          int swit =  mcp.digitalRead(0);
           if(swit == HIGH){
           DestinationX = board_move[XState][YState][0];
           DestinationY = board_move[XState][YState][1];
@@ -91,13 +101,16 @@ void setup() {
             Serial.print(DestinationX);
             Serial.print(" | ");
             Serial.println(DestinationY);
-            delay(1000);
+           XState = 0;
+           YState = 0;
            break;
           }
         }
     case 3:
        Serial.println("Initiate Moving Piece");
-
+       moveX(-(OriginX+1)*840);
+       moveY((OriginY+1)*840);
+       
        if(OriginX > DestinationX)
        xmove = abs((DestinationX-OriginX));
        else
@@ -114,9 +127,10 @@ void setup() {
        moveX(xmove*840);
        Serial.print("ymove is ");
        Serial.println(ymove);
-       
        moveY(-ymove*840);
       Serial.println("Done");
+      delay(2000);
+      homing();
       break;    
       /*
     case 4:
