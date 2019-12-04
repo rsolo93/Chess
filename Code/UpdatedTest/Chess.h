@@ -1,29 +1,29 @@
 #include "LedControl.h"
-#include "CTL.h"
 #include "SharpIR.h"
 #include <stddef.h>
 #include <Stepper.h>
-int Magbut = 14;
-int XposState = 15; 
-int XnegState = 16; 
-int YposState = 17; 
-int YnegState = 18;
-int Limit1 = 19;
-int Limit2 = 20;
+#include <LiquidCrystal.h>
+int Select = 52;
+int YposState = 32; 
+int YnegState = 30; 
+int XnegState = 28; 
+int XposState = 24 ;
+int LimitY = 19;
+int LimitX = 20;
 int XState, YState, OldYState, OldXState, OriginX, OriginY, DestinationX, DestinationY, counter;
-int a, b, limx, limy, x, y, Case, x1, x2, y1, y2, xmove, ymove, disatnce_cm1, distance_cm2;
+int a, b, limx, limy, x, y, Case, x1, x2, y1, y2, xmove, ymove, distance_cm1, distance_cm2;
 //Graveyard variables
 int xorig, yorig, xdest, ydest, turn, graveyard, casee;
-//SharpIR mySensor1 = SharpIR(A2, 1080);
-//SharpIR mySensor2 = SharpIR(A3, 1080);
+SharpIR mySensor1 = SharpIR(A2, 1080);
+SharpIR mySensor2 = SharpIR(A3, 1080);
 bool origin = false;
 bool destination = false;
 const int halfstep = 420;
 const int fullstep = halfstep*2;
 const int stepsPerRevolution = 211;
 
-LedControl lcW = LedControl(6,8,7,1);//Data, CLK, CS
-LedControl lcB = LedControl(9,11,10,2);//Data, CLK, CS
+LiquidCrystal lcd1(10, 9, 17, 16, 15, 14); //display1 (rs, enable, d4, d5, d6, d7)
+LedControl lc = LedControl(6,8,7,1);//Data, CLK, CS
 Stepper myStepperX(stepsPerRevolution, 2,3); //top down
 Stepper myStepperY(stepsPerRevolution, 4,5); //top down
 
@@ -47,71 +47,39 @@ Stepper myStepperY(stepsPerRevolution, 4,5); //top down
         return a;
     };
 
-int buttonpressW(){
+int buttonpress(){
   
-  if(digitalRead(XposState) == HIGH){
+  if(digitalRead(XposState) == LOW){
       XState = XState+1;
       if(XState > 7){XState=0;     
       }
     }
-    if(digitalRead(XnegState) == HIGH){
+    if(digitalRead(XnegState) == LOW){
       XState = XState-1;
       if(XState < 0){XState=7;         
       }
     }
-    if(digitalRead(YposState) == HIGH){
+    if(digitalRead(YposState) == LOW){
       YState = YState+1;
       if(YState > 7){YState=0;
       }       
     }
-    if(digitalRead(YnegState) == HIGH){
+    if(digitalRead(YnegState) == LOW){
       YState = YState-1;
       if(YState < 0){YState=7;     
       }
     }
-    lcW.clearDisplay(0);
-    lcW.setLed(0,XState,YState,true);
+    lc.clearDisplay(0);
+    lc.setLed(0,XState,YState,true);
       delay(120);
 
     if(XState != OldXState || YState != OldYState){
-      lcW.setLed(0,XState,YState,false);
+      lc.setLed(0,XState,YState,false);
       int OldXState = XState;
       int OldYState = YState;
     }
 }
 
-int buttonpressB(){
-  
-  if(digitalRead(XposState) == HIGH){
-      XState = XState+1;
-      if(XState > 7){XState=0;     
-      }
-    }
-    if(digitalRead(XnegState) == HIGH){
-      XState = XState-1;
-      if(XState < 0){XState=7;         
-      }
-    }
-    if(digitalRead(YposState) == HIGH){
-      YState = YState+1;
-      if(YState > 7){YState=0;
-      }       
-    }
-    if(digitalRead(YnegState) == HIGH){
-      YState = YState-1;
-      if(YState < 0){YState=7;     
-      }
-    }
-    lcB.clearDisplay(0);
-    lcB.setLed(0,XState,YState,true);
-      delay(120);
-
-    if(XState != OldXState || YState != OldYState){
-      lcB.setLed(0,XState,YState,false);
-      int OldXState = XState;
-      int OldYState = YState;
-    }
-}
 
     void moveX(int mx)
     {
@@ -126,12 +94,12 @@ int buttonpressB(){
 
   void homing(){
     
-    while(digitalRead(Limit1) != LOW)
+    while(digitalRead(LimitY) != LOW)
     moveY(-1);
-    while(digitalRead(Limit2) != LOW)
+    while(digitalRead(LimitX) != LOW)
     moveX(1);
 
-    if(digitalRead(Limit1) == LOW && digitalRead(Limit2) == LOW)
+    if(digitalRead(LimitY) == LOW && digitalRead(LimitX) == LOW)
     return;
   };
 
@@ -148,34 +116,18 @@ int buttonpressB(){
     return;
   };
 
-int Origin(){
-  origin == true;
-  destination == false;
-  int MagState = digitalRead(Magbut);
 
-    if(MagState == HIGH && origin == true) {
-     x = board_move[XState][YState][0];
-     y = board_move[XState][YState][1];
-    return x, y;
-    }
-}
-
-int Destination(){
-  origin == false;
-  destination == true;
-  int MagState = digitalRead(Magbut);
-
-    if(MagState == HIGH && destination == true) {
-     a = board_move[XState][YState][0];
-     b = board_move[XState][YState][1];
-    return a, b;
-    }
-}
 
 int Graveyard(int xGet,int yGet,int xGrave,int yGrave){
   moveX(-(xGet+1)*840);
   moveY((yGet+1)*840);
-  activate();
+  moveX(-420);
+  moveY(420);
+  //activate();
   delay(2000);
+  moveX(420);
+  moveY(-420);
+  moveX((xGet+1-xGrave)*840);
+  moveY(-(yGet+1-yGrave)*840);
   
 }

@@ -1,33 +1,41 @@
 #include "Chess.h"
-#include "SharpIR.h"
 #include "CTL.h"
 
 
 void setup() {
   // initialize the serial port:
   Serial.begin(9600);
-  //pinMode(magnet, OUTPUT);
-
-  pinMode(Magbut, INPUT_PULLUP);    //Magbut
+  pinMode(Select, INPUT_PULLUP);    //Select
   pinMode(XposState, INPUT_PULLUP);    //Xpos
   pinMode(XnegState, INPUT_PULLUP);    //Yneg
   pinMode(YposState, INPUT_PULLUP);    //Ypos
   pinMode(YnegState, INPUT_PULLUP);    //Yneg
-  pinMode(Limit1, INPUT); //Limitswitch 1
-  pinMode(Limit2, INPUT); //Limitswitch 2
-  lcW.shutdown(0,false);
-  lcW.setIntensity(0,8);
-  lcW.clearDisplay(0);
-  lcB.shutdown(0,false);
-  lcB.setIntensity(0,8);
-  lcB.clearDisplay(0);
+  pinMode(LimitY, INPUT); //Limitswitch 1
+  pinMode(LimitX, INPUT); //Limitswitch 2
+  lc.shutdown(0,false);
+  lc.setIntensity(0,8);
+  lc.clearDisplay(0);
+  lcd1.begin(16,2);
+  //lcd2.begin(16,2);
   myStepperX.setSpeed(800);
   myStepperY.setSpeed(800);
   homing();
+  Serial.println(digitalRead(LimitY));
+  Serial.println(digitalRead(LimitX));
+
+  
 
 }
   void loop() {
-  //int switchCase = digitalRead(Magbut);
+  //int switchCase = digitalRead(Select);
+  distance_cm1 = mySensor1.distance();
+  distance_cm2 = mySensor2.distance();
+/*  if(distance_cm1 > 50){
+    lcd1.print("Welcome Player 1");
+  }
+  if(distance_cm2 > 50){
+    lcd2.print("Welcome Player 2");
+  }*/
   Case = 1;
   /*if(switchCase == HIGH){
       Case = Case+1;
@@ -38,12 +46,15 @@ void setup() {
   switch(Case){
     case 1:
       Serial.println("Choose Origin");
+      lcd1.clear(); 
+      lcd1.print("Player 1 Choose Origin");
+      delay(3000);
         while(1){
-          buttonpressW();
+          buttonpress();
           x1 = XState;
           y1 = YState;
-          int swit =  digitalRead(Magbut);
-          if(swit == HIGH){
+          int swit =  digitalRead(Select);
+          if(swit == LOW){
             OriginX = board_move[XState][YState][0];
             OriginY = board_move[XState][YState][1];
             Serial.print(" Origin Coordinates are: ");
@@ -58,12 +69,15 @@ void setup() {
       }
     case 2:
       Serial.println("Choose Destination");
+      lcd1.clear();
+      lcd1.print("Player 1 Choose Destination");
+
         while(1){
-          buttonpressW();
+          buttonpress();
           x2 = XState;
           y2 = YState;
-          int swit = digitalRead(Magbut);
-          if(swit == HIGH){
+          int swit = digitalRead(Select);
+          if(swit == LOW){
           DestinationX = board_move[XState][YState][0];
           DestinationY = board_move[XState][YState][1];
             Serial.print("Destination Coordinates are: ");
@@ -109,23 +123,25 @@ void setup() {
     
     case 4:
        Serial.println("Initiate Moving Piece");
+       lcd1.clear();
+       lcd1.print("Great Move In Progress");
+
        while(1){
-       moveX(-(OriginX+1)*840);
-       moveY((OriginY+1)*840);
-       
-       Orig2Dest();
-       delay(2000);
-       Serial.print("xmove is ");
-       Serial.print(xmove);
-       Serial.print(" ");
-       moveX(xmove*840);
-       Serial.print("ymove is ");
-       Serial.println(ymove);
-       moveY(-ymove*840);
-      Serial.println("Done");
-      delay(2000);
-      homing();
-      break;
+         moveX(-(OriginX+1)*840);
+         moveY((OriginY+1)*840);
+         Orig2Dest();
+         delay(2000);
+         Serial.print("xmove is ");
+         Serial.print(xmove);
+         Serial.print(" ");
+         moveX(xmove*840);
+         Serial.print("ymove is ");
+         Serial.println(ymove);
+         moveY(-ymove*840);
+         Serial.println("Done");
+         delay(2000);
+         homing();
+         break;
        }
          
         
@@ -134,11 +150,11 @@ void setup() {
 
       Serial.println("Choose Origin2");
         while(1){
-          buttonpressB();
+          buttonpress();
           x1 = XState;
           y1 = YState;
-          int swit =  digitalRead(Magbut);
-          if(swit == HIGH){
+          int swit =  digitalRead(Select);
+          if(swit == LOW){
             OriginX = board_move[XState][YState][0];
             OriginY = board_move[XState][YState][1];
             Serial.print(" Origin Coordinates are: ");
@@ -156,11 +172,11 @@ void setup() {
 
       Serial.println("Choose Destination");
         while(1){
-          buttonpressB();
+          buttonpress();
           x2 = XState;
           y2 = YState;
-          int swit = digitalRead(Magbut);
-          if(swit == HIGH){
+          int swit = digitalRead(Select);
+          if(swit == LOW){
           DestinationX = board_move[XState][YState][0];
           DestinationY = board_move[XState][YState][1];
             Serial.print("Destination Coordinates are: ");
