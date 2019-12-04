@@ -16,16 +16,15 @@ void setup() {
   lc.setIntensity(0,8);
   lc.clearDisplay(0);
   lcd1.begin(16,2);
-  //lcd2.begin(16,2);
+  lcd2.begin(16,2);
   myStepperX.setSpeed(800);
   myStepperY.setSpeed(800);
   homing();
-  Serial.println(digitalRead(LimitY));
-  Serial.println(digitalRead(LimitX));
+  lcd1.clear();
+  lcd2.clear();
+}
 
   
-
-}
   void loop() {
   //int switchCase = digitalRead(Select);
   distance_cm1 = mySensor1.distance();
@@ -37,17 +36,18 @@ void setup() {
     lcd2.print("Welcome Player 2");
   }*/
   Case = 1;
-  /*if(switchCase == HIGH){
-      Case = Case+1;
-      Serial.print(Case);
-      if(Case > 6){Case=0;     
-      }*/
-
+  
   switch(Case){
     case 1:
       Serial.println("Choose Origin");
       lcd1.clear(); 
-      lcd1.print("Player 1 Choose Origin");
+      lcd1.print("Player 1 Choose ");
+      lcd1.setCursor(0,2);
+      lcd1.print("Origin");
+      lcd2.clear();
+      lcd2.print("Waiting For ");
+      lcd2.setCursor(1,2);
+      lcd2.print("Player 1");
       delay(3000);
         while(1){
           buttonpress();
@@ -70,7 +70,9 @@ void setup() {
     case 2:
       Serial.println("Choose Destination");
       lcd1.clear();
-      lcd1.print("Player 1 Choose Destination");
+      lcd1.print("Player 1 Choose");
+      lcd1.setCursor(0,2);
+      lcd1.print("Destination");
 
         while(1){
           buttonpress();
@@ -124,7 +126,10 @@ void setup() {
     case 4:
        Serial.println("Initiate Moving Piece");
        lcd1.clear();
-       lcd1.print("Great Move In Progress");
+       lcd1.print("Great Move");
+       lcd1.setCursor(0,2);
+       lcd1.print("In Progress");
+
 
        while(1){
          moveX(-(OriginX+1)*840);
@@ -150,6 +155,9 @@ void setup() {
 
       Serial.println("Choose Origin2");
         while(1){
+          lcd1.print("Player 2");
+          lcd1.setCursor(2,0);
+          lcd1.print("GOOOOOOOO");
           buttonpress();
           x1 = XState;
           y1 = YState;

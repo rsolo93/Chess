@@ -22,7 +22,8 @@ const int halfstep = 420;
 const int fullstep = halfstep*2;
 const int stepsPerRevolution = 211;
 
-LiquidCrystal lcd1(10, 9, 17, 16, 15, 14); //display1 (rs, enable, d4, d5, d6, d7)
+LiquidCrystal lcd1(10, 9, 17, 16, 15, 14); //displayYellow (rs, enable, d4, d5, d6, d7)
+LiquidCrystal lcd2(10, 11, 17, 16, 15, 14); //displayGreen (rs, enable, d4, d5, d6, d7)
 LedControl lc = LedControl(6,8,7,1);//Data, CLK, CS
 Stepper myStepperX(stepsPerRevolution, 2,3); //top down
 Stepper myStepperY(stepsPerRevolution, 4,5); //top down
@@ -41,11 +42,6 @@ Stepper myStepperY(stepsPerRevolution, 4,5); //top down
       { {0,7},  {1,7},  {2,7},  {3,7},  {4,7},  {5,7},  {6,7},  {7,7}  },
     };
 
-    int calc(int x, int y)
-    {
-        int a = x-y;        
-        return a;
-    };
 
 int buttonpress(){
   
