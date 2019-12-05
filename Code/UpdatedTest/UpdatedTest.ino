@@ -12,6 +12,7 @@ void setup() {
   pinMode(YnegState, INPUT_PULLUP);    //Yneg
   pinMode(LimitY, INPUT); //Limitswitch 1
   pinMode(LimitX, INPUT); //Limitswitch 2
+  pinMode(Magnet, OUTPUT); //Magnet
   lc.shutdown(0,false);
   lc.setIntensity(0,8);
   lc.clearDisplay(0);
@@ -22,6 +23,8 @@ void setup() {
   homing();
   lcd1.clear();
   lcd2.clear();
+
+  digitalWrite(Magnet,HIGH);
 }
 
   
@@ -40,19 +43,11 @@ void setup() {
   switch(Case){
     case 1:
       Serial.println("Choose Origin");
-      lcd1.clear(); 
-      lcd1.print("Player 1 Choose ");
-      lcd1.setCursor(0,2);
-      lcd1.print("Origin");
-      lcd2.clear();
-      lcd2.print("Waiting For ");
-      lcd2.setCursor(1,2);
-      lcd2.print("Player 1");
-      delay(3000);
         while(1){
           buttonpress();
           x1 = XState;
           y1 = YState;
+          DisplayMoveYellowOrigin(x1, y1);
           int swit =  digitalRead(Select);
           if(swit == LOW){
             OriginX = board_move[XState][YState][0];
@@ -69,15 +64,11 @@ void setup() {
       }
     case 2:
       Serial.println("Choose Destination");
-      lcd1.clear();
-      lcd1.print("Player 1 Choose");
-      lcd1.setCursor(0,2);
-      lcd1.print("Destination");
-
         while(1){
           buttonpress();
           x2 = XState;
           y2 = YState;
+          DisplayMoveYellowDestination(x2, y2);
           int swit = digitalRead(Select);
           if(swit == LOW){
           DestinationX = board_move[XState][YState][0];
@@ -111,16 +102,7 @@ void setup() {
       Serial.print("casee ");
       Serial.print(casee);
       Serial.print('\n');
-      Case = casee;
-      switch (Case){
-        case 1:
-        Case = 1;
-        break;
-        case 4:
-        Case = 4;
-        break;
-      }
-      
+      Case = casee;      
     }
     
     case 4:
@@ -134,8 +116,9 @@ void setup() {
        while(1){
          moveX(-(OriginX+1)*840);
          moveY((OriginY+1)*840);
+         pinMode(Magnet,LOW);
          Orig2Dest();
-         delay(2000);
+         delay(1000);
          Serial.print("xmove is ");
          Serial.print(xmove);
          Serial.print(" ");
@@ -143,6 +126,8 @@ void setup() {
          Serial.print("ymove is ");
          Serial.println(ymove);
          moveY(-ymove*840);
+         pinMode(Magnet, HIGH);
+
          Serial.println("Done");
          delay(2000);
          homing();
@@ -155,12 +140,10 @@ void setup() {
 
       Serial.println("Choose Origin2");
         while(1){
-          lcd1.print("Player 2");
-          lcd1.setCursor(2,0);
-          lcd1.print("GOOOOOOOO");
           buttonpress();
           x1 = XState;
           y1 = YState;
+          DisplayMoveGreenOrigin(x1, y1);
           int swit =  digitalRead(Select);
           if(swit == LOW){
             OriginX = board_move[XState][YState][0];
@@ -183,6 +166,7 @@ void setup() {
           buttonpress();
           x2 = XState;
           y2 = YState;
+          DisplayMoveGreenDestination(x2, y2);
           int swit = digitalRead(Select);
           if(swit == LOW){
           DestinationX = board_move[XState][YState][0];
@@ -231,9 +215,13 @@ void setup() {
       case 8:
 
       Serial.println("Initiate Moving Piece");
+       lcd2.clear();
+       lcd2.print("Great Move");
+       lcd2.setCursor(0,2);
+       lcd2.print("In Progress");
        moveX(-(OriginX+1)*840);
        moveY((OriginY+1)*840);
-       
+       digitalWrite(Magnet,LOW);
        Orig2Dest();
        delay(2000);
        Serial.print("xmove is ");
@@ -243,6 +231,7 @@ void setup() {
        Serial.print("ymove is ");
        Serial.println(ymove);
        moveY(-ymove*840);
+       digitalWrite(Magnet,HIGH);
       Serial.println("Done");
       delay(2000);
       homing();
