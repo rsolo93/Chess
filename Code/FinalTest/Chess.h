@@ -11,6 +11,9 @@ int YposState = 24 ;
 int LimitY = 19;
 int LimitX = 20;
 int Magnet = 50;
+int wait = 34;
+int tg = 36;
+int ty = 38;
 int XState, YState, OldYState, OldXState, OriginX, OriginY, DestinationX, DestinationY, counter;
 int a, b, limx, limy, x, y, Case, x1, x2, y1, y2, xmove, ymove, distance_cm1, distance_cm2;
 //Graveyard variables
@@ -56,6 +59,8 @@ Stepper myStepperY(stepsPerRevolution, 4,5); //top down
       {"A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8"}
     };
 
+    const char *phrase [4] = {"Terrible Move", "Alright Move", "Amazing Move", "Not Good Move"};
+
     int calc(int x, int y)
     {
         int a = x-y;        
@@ -64,6 +69,8 @@ Stepper myStepperY(stepsPerRevolution, 4,5); //top down
 
 int buttonpress(){
   
+     digitalWrite(Magnet,HIGH);
+
   if(digitalRead(XposState) == LOW){
       XState = XState+1;
       if(XState > 7){XState=0;     
@@ -135,89 +142,52 @@ int buttonpress(){
 
 
 int Graveyard(int xGet,int yGet,int xGrave,int yGrave){
+  digitalWrite(wait,HIGH);
   moveX(940);
   moveX((xGet+1)*840);
   moveY((yGet+1)*840);
   moveX(-420);
-  moveY(-420);
   digitalWrite(Magnet,LOW);
   delay(2000);
-  moveX(420);
-  moveY(420);
-  moveX((xGet+1-xGrave)*840);
-  moveY((yGet+1-yGrave)*840);
+  moveX(-420);
+  moveY(-420);
+  moveX(-(xGet+1-xGrave)*840);
+  moveY(-(yGet-yGrave)*840);
   digitalWrite(Magnet,HIGH);
   homing();
 }
 
 
 int DisplayMoveYellowOrigin(int x, int y){
-  lcd1.clear();
-  lcd1.setCursor(0,0);
-  lcd1.print("Choose Origin ");
-  lcd1.setCursor(0,1);
-  lcd1.print("Position: ");
+  lcd1.setCursor(9,1);
+  lcd1.print("       ");
   lcd1.setCursor(9,1);
   lcd1.print(Display[x][y]);
-  lcd2.clear();
-  lcd2.clear();
-  lcd2.print("Waiting For ");
-  lcd2.setCursor(1,2);
-  lcd2.print("Opponent");
-  lcd1.noAutoscroll();
-  lcd2.noAutoscroll();
-
 }
 
 int DisplayMoveYellowDestination(int x, int y){
-  lcd1.clear();
-  lcd1.setCursor(0,0);
-  lcd1.print("Destination ");
-  lcd1.setCursor(0,1);
-  lcd1.print("Position: ");
+  lcd1.setCursor(9,1);
+  lcd1.print("       ");
   lcd1.setCursor(9,1);
   lcd1.print(Display[x][y]);
-  lcd2.clear();
-  lcd2.clear();
-  lcd2.print("Waiting For ");
-  lcd2.setCursor(1,2);
-  lcd2.print("Opponent");
-  lcd1.noAutoscroll();
-  lcd2.noAutoscroll();
+
 
 }
 
 
 int DisplayMoveGreenOrigin(int x, int y){
-  lcd2.clear();
-  lcd2.setCursor(0,0);
-  lcd2.print("Choose Origin ");
-  lcd2.setCursor(0,1);
-  lcd2.print("Position: ");
+  lcd2.setCursor(9,1);
+  lcd2.print("       ");
   lcd2.setCursor(9,1);
   lcd2.print(Display[x][y]);
-  lcd1.clear();
-  lcd1.print("Waiting For ");
-  lcd1.setCursor(1,2);
-  lcd1.print("Opponent");
-  lcd1.noAutoscroll();
-  lcd2.noAutoscroll();
 
 }
 
 int DisplayMoveGreenDestination(int x, int y){
-  lcd2.clear();
-  lcd2.setCursor(0,0);
-  lcd2.print("Destination ");
-  lcd2.setCursor(0,1);
-  lcd2.print("Position: ");
+  lcd2.setCursor(9,1);
+  lcd2.print("       ");
   lcd2.setCursor(9,1);
   lcd2.print(Display[x][y]);
-  lcd1.clear();
-  lcd1.print("Waiting For ");
-  lcd1.setCursor(1,2);
-  lcd1.print("Opponent");
-  lcd1.noAutoscroll();
-  lcd2.noAutoscroll();
+ 
 
 }

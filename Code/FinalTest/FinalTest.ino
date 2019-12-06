@@ -5,22 +5,25 @@
 void setup() {
   // initialize the serial port:
   Serial.begin(9600);
-  pinMode(Magnet, OUTPUT);
-  pinMode(Select, INPUT_PULLUP);    //Magbut
+  pinMode(Magnet, OUTPUT);         //Magnet
+  pinMode(Select, INPUT_PULLUP);    //Select
   pinMode(XposState, INPUT_PULLUP);    //Xpos
   pinMode(XnegState, INPUT_PULLUP);    //Yneg
   pinMode(YposState, INPUT_PULLUP);    //Ypos
   pinMode(YnegState, INPUT_PULLUP);    //Yneg
   pinMode(LimitY, INPUT); //Limitswitch 1
   pinMode(LimitX, INPUT); //Limitswitch 2
+  pinMode(wait, OUTPUT);
+  pinMode(tg, OUTPUT);
+  pinMode(ty, OUTPUT);
   lc.shutdown(0,false);
   lc.setIntensity(0,8);
   lc.clearDisplay(0);
   lcd1.begin(16,2);
   lcd2.begin(16,2);
   digitalWrite(Magnet,HIGH);
-  myStepperX.setSpeed(400);
-  myStepperY.setSpeed(400);
+  myStepperX.setSpeed(500);
+  myStepperY.setSpeed(500);
   homing();
   lcd1.clear();
   lcd2.clear();
@@ -50,7 +53,20 @@ void setup() {
 
   switch(Case){
     case 1:
+      lcd1.clear();
+      lcd2.clear();
+      digitalWrite(ty,HIGH);
+      digitalWrite(tg,LOW);
       Serial.println("Choose Origin");
+      lcd1.setCursor(0,0);
+      lcd1.print("Choose Origin ");
+      lcd1.setCursor(0,1);
+      lcd1.print("Position: ");
+      lcd2.print("Waiting For ");
+      lcd2.setCursor(1,2);
+      lcd2.print("Opponent");
+      lcd1.noAutoscroll();
+      lcd2.noAutoscroll();
         while(1){
           buttonpress();
           x1 = XState;
@@ -72,6 +88,20 @@ void setup() {
       }
     case 2:
       Serial.println("Choose Destination");
+        digitalWrite(ty,HIGH);
+        digitalWrite(tg,LOW);
+        lcd1.clear();
+        lcd1.clear();
+        lcd1.setCursor(0,0);
+        lcd1.print("Destination ");
+        lcd1.setCursor(0,1);
+        lcd1.print("Position: ");
+        lcd2.print("Waiting For ");
+        lcd2.setCursor(1,2);
+        lcd2.print("Opponent");
+        lcd1.noAutoscroll();
+        lcd2.noAutoscroll();
+
         while(1){
           buttonpress();
           x2 = XState;
@@ -93,6 +123,8 @@ void setup() {
 
     case 3:
     {
+      digitalWrite(ty,HIGH);
+      digitalWrite(tg,LOW);
       xorig = OriginX;
       yorig = OriginY;
       xdest = DestinationX;
@@ -111,43 +143,52 @@ void setup() {
       Serial.print(casee);
       Serial.print('\n');
       Case = casee;
-      switch (Case){
-        case 1:
-        Case = 1;
-        break;
-        case 4:
-        Case = 4;
-        break;
-      }
       
     }
     
     case 4:
        Serial.println("Initiate Moving Piece");
+       digitalWrite(ty,HIGH);
+       digitalWrite(tg,LOW);
+       digitalWrite(wait, HIGH);
        lcd1.clear();
-       lcd1.print("Great Move");
+       lcd2.clear();
+       int i = random(0,4);
+       lcd1.print(phrase[i]);
        lcd1.setCursor(0,2);
        lcd1.print("In Progress");
+       lcd2.print("Waiting For ");
+       lcd2.setCursor(1,2);
+       lcd2.print("Opponent");
+       lcd1.noAutoscroll();
+       lcd2.noAutoscroll();
        while(1){
          moveX(940);
-         delay(5000);
+         delay(2000);
          moveX((OriginX+1)*840);
-         moveY((OriginY+1)*840);
+         moveY((OriginY+2)*840);
+         moveX(-420);
+         moveY(-420);
          digitalWrite(Magnet,LOW);
          Orig2Dest();
+         moveX(520);
+         moveY(420);
          delay(2000);
+         Serial.print("ymove is ");
+         Serial.println(ymove);
+         moveY(-(ymove+1.5)*840);
          Serial.print("xmove is ");
          Serial.print(xmove);
          Serial.print(" ");
          moveX(-xmove*840);
-         Serial.print("ymove is ");
-         Serial.println(ymove);
-         moveY(-ymove*840);
+         delay(1000);
+         moveX(-420);
+         moveY(420);
          digitalWrite(Magnet,HIGH);
+         delay(1000);
          Serial.println("Done");
-         delay(2000);
          homing();
-         Case = 1;
+         digitalWrite(wait, LOW);
          break;
        }
          
@@ -156,6 +197,20 @@ void setup() {
       case 5:
 
       Serial.println("Choose Origin2");
+      digitalWrite(ty,LOW);
+      digitalWrite(tg,HIGH);
+      lcd1.clear();
+      lcd2.clear();
+      Serial.println("Choose Origin");
+      lcd2.setCursor(0,0);
+      lcd2.print("Choose Origin ");
+      lcd2.setCursor(0,1);
+      lcd2.print("Position: ");
+      lcd1.print("Waiting For ");
+      lcd1.setCursor(1,2);
+      lcd1.print("Opponent");
+      lcd1.noAutoscroll();
+      lcd2.noAutoscroll();
         while(1){
           buttonpress();
           x1 = XState;
@@ -179,6 +234,20 @@ void setup() {
       case 6:
 
       Serial.println("Choose Destination");
+        digitalWrite(ty,LOW);
+        digitalWrite(tg,HIGH);
+        lcd1.clear();
+        lcd2.clear();
+        lcd2.setCursor(0,0);
+        lcd2.print("Destination ");
+        lcd2.setCursor(0,1);
+        lcd2.print("Position: ");
+        lcd1.print("Waiting For ");
+        lcd1.setCursor(1,2);
+        lcd1.print("Opponent");
+        lcd1.noAutoscroll();
+        lcd2.noAutoscroll();
+
         while(1){
           buttonpress();
           x2 = XState;
@@ -201,6 +270,8 @@ void setup() {
       case 7:
 
         {
+      digitalWrite(ty,LOW);
+      digitalWrite(tg,HIGH);
       xorig = OriginX;
       yorig = OriginY;
       xdest = DestinationX;
@@ -218,42 +289,52 @@ void setup() {
       Serial.print(casee);
       Serial.print('\n');
       Case = casee;
-      switch (Case){
-        case 1:
-        Case = 5;
-        break;
-        case 8:
-        Case = 8;
-        break;
+
       }
       
-    }
+    
 
       case 8:
 
       Serial.println("Initiate Moving Piece");
+      digitalWrite(ty,LOW);
+      digitalWrite(tg,HIGH);
+      digitalWrite(wait, HIGH); 
+       lcd1.clear();
        lcd2.clear();
-       lcd2.print("Great Move");
+       int j = random(0,4);
+       lcd2.print(phrase[j]);
        lcd2.setCursor(0,2);
        lcd2.print("In Progress");
+       lcd1.print("Waiting For ");
+       lcd1.setCursor(1,2);
+       lcd1.print("Opponent");
+       lcd1.noAutoscroll();
+       lcd2.noAutoscroll();
        moveX(940);
        moveX((OriginX+1)*840);
        moveY((OriginY+1)*840);
+       moveX(-420);
+       moveY(-420);
        digitalWrite(Magnet,LOW);
+       moveX(520);
+       moveY(420);
        Orig2Dest();
-       delay(2000);
+       delay(1000);
+       Serial.print("ymove is ");
+       Serial.println(ymove);
+       moveY(-(ymove-1.5)*840);
        Serial.print("xmove is ");
        Serial.print(xmove);
        Serial.print(" ");
        moveX(-xmove*840);
-       Serial.print("ymove is ");
-       Serial.println(ymove);
-       moveY(-ymove*840);
+       delay(1000);
+       moveX(-420);
        digitalWrite(Magnet,HIGH);
-       delay(3000);
+       delay(1000);
       Serial.println("Done");
-      delay(2000);
       homing();
+      digitalWrite(wait, LOW);
       break;    
         }
   } 
