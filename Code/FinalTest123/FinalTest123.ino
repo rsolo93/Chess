@@ -152,7 +152,7 @@ void setup() {
        digitalWrite(wait, HIGH);
        lcd1.clear();
        lcd2.clear();
-       lcd1.print(phrase[random(0,4)]);
+       lcd1.print(phrase[random(0,3)]);
        lcd1.setCursor(0,2);
        lcd1.print("In Progress");
        lcd2.print("Waiting For ");
@@ -299,7 +299,7 @@ void setup() {
       digitalWrite(wait, HIGH); 
        lcd1.clear();
        lcd2.clear();
-       lcd2.print(phrase[random(0,4)]);
+       lcd2.print(phrase[random(0,3)]);
        lcd2.setCursor(0,2);
        lcd2.print("In Progress");
        lcd1.print("Waiting For ");

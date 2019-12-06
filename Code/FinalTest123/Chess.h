@@ -149,9 +149,10 @@ int GraveyardY(int xGet,int yGet,int xGrave,int yGrave){
   moveX((xGet+1)*840);
   moveY((yGet+1)*840);
   moveX(-420);
+  moveY(-420);
   digitalWrite(Magnet,LOW);
   delay(1000);
-  moveX(-420);
+  moveX(420);
   moveY(420);
  // moveX(-(xGet+1-xGrave)*840);
   while(digitalRead(LimitX) != 0){
