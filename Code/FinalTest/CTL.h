@@ -65,7 +65,7 @@ if(turn == 0) //white turn
       {
        board[graveyard - 1][0] = char(inDest); //set captured piece to graveyard spot col #0
        
-       Graveyard(xDest, yDest, graveyard-1, 0);
+       GraveyardY(xDest, yDest, 0, graveyard);
        
        turn = 1; /////set turn to black
        casee = 4; //push switch to next phase for movement
@@ -76,6 +76,8 @@ if(turn == 0) //white turn
       else if(graveyard > 8 && graveyard <= 16) //graveyard is in col #9
       {
         board[graveyard - 9][9] = char(inDest); //set captured piece to graveyard spot col #9
+         GraveyardY(xDest, yDest, 0, graveyard);
+
         turn = 1; /////set turn to black
        casee = 4; //push switch to next phase for movement
       }
@@ -120,12 +122,16 @@ else if(turn == 1) //black turn
       if(graveyard > 0 && graveyard <= 8) //graveyard is in col #0
       {
         board[graveyard - 1][0] = char(inDest); //set captured piece to graveyard spot col #0
+        GraveyardG(xDest, yDest, 0, graveyard);
+
         turn = 0; /////set turn to white
       casee = 8; //push switch to next phase for movement
       }
       if(graveyard > 8 && graveyard <= 16) //graveyard is in col #9
       {
         board[graveyard - 9][9] = char(inDest); //set captured piece to graveyard spot col #9
+        GraveyardG(xDest, yDest, 0, graveyard);
+
         turn = 0; /////set turn to white
       casee = 8; //push switch to next phase for movement
       }

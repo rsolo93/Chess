@@ -141,17 +141,42 @@ int buttonpress(){
 
 
 
-int Graveyard(int xGet,int yGet,int xGrave,int yGrave){
+int GraveyardY(int xGet,int yGet,int xGrave,int yGrave){
+  lcd1.clear();
+  lcd1.print("Banishing Enemy");
   digitalWrite(wait,HIGH);
   moveX(940);
   moveX((xGet+1)*840);
   moveY((yGet+1)*840);
   moveX(-420);
   digitalWrite(Magnet,LOW);
+  delay(1000);
+  moveX(-420);
+  moveY(420);
+ // moveX(-(xGet+1-xGrave)*840);
+  while(digitalRead(LimitX) != 0){
+  moveX(-1);}
+  moveY(-((yGet-yGrave)+1)*840);
+  digitalWrite(Magnet,HIGH);
+  homing();
+}
+
+
+int GraveyardG(int xGet,int yGet,int xGrave,int yGrave){
+  digitalWrite(wait,HIGH);
+  lcd2.clear();
+  lcd2.print("Banishing Enemy");
+  moveX(940);
+  moveX((xGet+1)*840);
+  moveY((yGet+1.5)*840);
+  moveX(-420);
+  digitalWrite(Magnet,LOW);
   delay(2000);
   moveX(-420);
-  moveY(-420);
-  moveX(-(xGet+1-xGrave)*840);
+  moveY(-320);
+  while(digitalRead(LimitX) != 0){
+  moveX(-1);}
+ // moveX(((xGet)-xGrave)*840);
   moveY(-(yGet-yGrave)*840);
   digitalWrite(Magnet,HIGH);
   homing();

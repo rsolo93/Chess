@@ -35,7 +35,7 @@ void setup() {
   distance_cm2 = mySensor2.distance();
   Case = 1;
 
-/*  while (distance_cm1 > 15 || distance_cm2 > 15){
+  while (distance_cm1 > 15 || distance_cm2 > 15){
     distance_cm1 = mySensor1.distance();
     distance_cm2 = mySensor2.distance();
     Serial.print("Mean distance1: ");
@@ -46,10 +46,10 @@ void setup() {
     Serial.println(" cm");
     lcd1.clear(); 
     lcd2.clear();
-    lcd1.print("Waiting for Player 1");
-    lcd2.print("Waiting for player 2");
+    lcd1.print("Step Up");
+    lcd2.print("Step up");
     delay(500);
-  }*/
+  }
 
   switch(Case){
     case 1:
@@ -142,19 +142,17 @@ void setup() {
       Serial.print("casee ");
       Serial.print(casee);
       Serial.print('\n');
-      Case = casee;
       
     }
     
-    case 4:
+    case 4:  // KSU TURN
        Serial.println("Initiate Moving Piece");
        digitalWrite(ty,HIGH);
        digitalWrite(tg,LOW);
        digitalWrite(wait, HIGH);
        lcd1.clear();
        lcd2.clear();
-       int i = random(0,4);
-       lcd1.print(phrase[i]);
+       lcd1.print(phrase[random(0,4)]);
        lcd1.setCursor(0,2);
        lcd1.print("In Progress");
        lcd2.print("Waiting For ");
@@ -170,20 +168,21 @@ void setup() {
          moveX(-420);
          moveY(-420);
          digitalWrite(Magnet,LOW);
+         delay(1000);
          Orig2Dest();
          moveX(520);
          moveY(420);
          delay(2000);
          Serial.print("ymove is ");
          Serial.println(ymove);
-         moveY(-(ymove+1.5)*840);
+         moveY(-(ymove)*840);
          Serial.print("xmove is ");
          Serial.print(xmove);
          Serial.print(" ");
          moveX(-xmove*840);
          delay(1000);
          moveX(-420);
-         moveY(420);
+         moveY(-520);
          digitalWrite(Magnet,HIGH);
          delay(1000);
          Serial.println("Done");
@@ -201,7 +200,6 @@ void setup() {
       digitalWrite(tg,HIGH);
       lcd1.clear();
       lcd2.clear();
-      Serial.println("Choose Origin");
       lcd2.setCursor(0,0);
       lcd2.print("Choose Origin ");
       lcd2.setCursor(0,1);
@@ -279,7 +277,7 @@ void setup() {
       turn = 1;
       int arr[2] = {0,0};
       CTL(xorig,yorig,xdest,ydest,turn,graveyard,arr);
-      delay(2000);
+      delay(1000);
       casee = arr[0];
       graveyard = arr[1];
       Serial.print("graveyard spot ");
@@ -288,13 +286,11 @@ void setup() {
       Serial.print("casee ");
       Serial.print(casee);
       Serial.print('\n');
-      Case = casee;
-
       }
       
     
 
-      case 8:
+      case 8:  // SPSU TURN
 
       Serial.println("Initiate Moving Piece");
       digitalWrite(ty,LOW);
@@ -302,8 +298,7 @@ void setup() {
       digitalWrite(wait, HIGH); 
        lcd1.clear();
        lcd2.clear();
-       int j = random(0,4);
-       lcd2.print(phrase[j]);
+       lcd2.print(phrase[random(0,4)]);
        lcd2.setCursor(0,2);
        lcd2.print("In Progress");
        lcd1.print("Waiting For ");
@@ -314,22 +309,24 @@ void setup() {
        moveX(940);
        moveX((OriginX+1)*840);
        moveY((OriginY+1)*840);
-       moveX(-420);
+       moveX(-520);
        moveY(-420);
        digitalWrite(Magnet,LOW);
-       moveX(520);
+       delay(1000);
+       moveX(720);
        moveY(420);
        Orig2Dest();
        delay(1000);
        Serial.print("ymove is ");
        Serial.println(ymove);
-       moveY(-(ymove-1.5)*840);
+       moveY(-ymove*840);
        Serial.print("xmove is ");
        Serial.print(xmove);
        Serial.print(" ");
        moveX(-xmove*840);
        delay(1000);
-       moveX(-420);
+       moveX(-720);
+       moveY(420);
        digitalWrite(Magnet,HIGH);
        delay(1000);
       Serial.println("Done");
